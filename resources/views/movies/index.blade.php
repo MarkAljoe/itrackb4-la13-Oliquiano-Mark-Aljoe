@@ -50,10 +50,20 @@
         </tr>
         @forelse ($movies as $movie)
             <tr>
-                <td>{{ $movie['title'] }}</td>
+                <td>{{ $movie->title }}</td>
                 <td>{{ $movie->genre->name }}</td>
                 <td>{{ $movie['rating'] }}</td>
-                <td><a href="{{ route('movies.show', $movie['id']) }}" class="btn btn-primary btn-sm">View</a></td>
+                <td>
+                    <a href="{{ route('movies.show', $movie->id) }}" class="btn btn-primary btn-sm">View</a>
+                    <a href="{{ route('movies.edit', $movie->id) }}" class="btn btn-warning btn-sm">Edit</a>
+                    <form action="{{ route('movies.destroy', $movie->id) }}" method="POST"
+                        style="display:inline"
+                        onsubmit="return confirm('Delete this movie?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </td>
             </tr>
         @empty
             <tr><td colspan="4" class="text-center text-muted">No movies match these filters.</td></tr>

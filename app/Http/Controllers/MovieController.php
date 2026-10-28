@@ -6,7 +6,6 @@ use App\Models\Movie;
 use App\Models\Genre;
 use Illuminate\Http\Request;
 
-
 class MovieController extends Controller
 {
     public function index(Request $request)
@@ -14,7 +13,6 @@ class MovieController extends Controller
         $currentGenre  = $request->query('genre');
         $currentRating = $request->query('rating');
 
-        
         $query = Movie::query();
 
         if ($currentGenre) {
@@ -30,9 +28,8 @@ class MovieController extends Controller
         return view('movies.index', compact('movies', 'genres', 'currentGenre', 'currentRating'));
     }
 
-    public function show($id)
+    public function show(Movie $movie)
     {
-        $movie = Movie::findOrFail($id);
         return view('movies.show', compact('movie'));
     }
 
@@ -53,6 +50,32 @@ class MovieController extends Controller
         ]);
 
         Movie::create($validated);
+        return redirect()->route('movies.index');
+    }
+
+    public function edit(Movie $movie)
+    {
+        $genres = Genre::all();
+        return view('movies.edit', compact('movie', 'genres'));
+    }
+
+    public function update(Request $request, Movie $movie)
+    {
+        $validated = $request->validate([
+            'title'        => 'required|string|max:255',
+            'genre_id'     => 'required|exists:genres,id',
+            'release_year' => 'required|integer',
+            'is_featured'  => 'required|boolean',
+            'rating'       => 'nullable|string',
+        ]);
+
+        $movie->update($validated);
+        return redirect()->route('movies.index');
+    }
+
+    public function destroy(Movie $movie)
+    {
+        $movie->delete();
         return redirect()->route('movies.index');
     }
 }
