@@ -1,9 +1,21 @@
-## ITRACKB4 LA11 — Movies
-## G1. Route model binding needs two things. Name both.
-Route model binding needs the model type, like Movie $movie, and the parameter name must match the route, like {movie}. If the names don't match, Laravel might not find the correct movie record. Without the type-hint, Laravel will only treat the value as a normal ID instead of automatically getting the record.
+# ITRACKB4 LA12 — Movies
 
-## G2. Why did the Delete link give a 404?
-The Delete link gave a 404 because a normal link sends a GET request, while the delete route requires a DELETE request. Even though the URL was correct, Laravel couldn't find a matching route because the HTTP method was different.
+## H1. The error page named a vendor file. Where was your mistake actually?
+The top of the error page showed a file inside the vendor folder because that
+is where Laravel detected the call to the undefined method. My actual mistake
+was in app/Http/Controllers/MovieController.php at line 26, which the
+Exception trace showed by opening that frame automatically. The vendor file
+was just where the failure surfaced, not where I wrote the wrong code.
 
-## G3. What would break without old()'s second argument?
-Without the second argument in old(), the edit form wouldn't show the movie's original values when opened for the first time. Also, if the form had an error after submitting, the user's previous inputs might be lost instead of being kept. The second argument makes sure the original values appear when there is no old input.
+## H2. What will your Log::info line tell you next month that the error page could not?
+The log line records the id of every movie that was saved, with a timestamp.
+Next month it can tell me exactly which records were created and in what order,
+even after the page session is long gone. The error page only exists while the
+request is active and disappears the moment you navigate away.
+
+## H3. When is a 403 the better answer, and when is a redirect with a message better?
+A 403 is the better answer when the action is fundamentally not allowed — like
+trying to delete the last movie in a genre, which would leave orphaned data.
+A redirect with a message is better when the refusal is something the user can
+fix themselves, like submitting an incomplete form, because it keeps them in
+the flow and tells them what to correct.
