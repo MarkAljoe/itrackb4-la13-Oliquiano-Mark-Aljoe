@@ -1,21 +1,23 @@
-# ITRACKB4 LA12 — Movies
+# ITRACKB4 LA13 — Movies
 
-## H1. The error page named a vendor file. Where was your mistake actually?
-The top of the error page showed a file inside the vendor folder because that
-is where Laravel detected the call to the undefined method. My actual mistake
-was in app/Http/Controllers/MovieController.php at line 26, which the
-Exception trace showed by opening that frame automatically. The vendor file
-was just where the failure surfaced, not where I wrote the wrong code.
+## J1. Name two things an index() on a resource controller does that yours does not have to.
+A resource controller's index() is expected to list all records of a specific
+model and pass them to a list view. My HomeController's index() does not list
+any records in a table — it only passes two counts and returns a welcome view.
+It also does not need to handle query filters, pagination, or sorting, because
+its only job is to display the front page.
 
-## H2. What will your Log::info line tell you next month that the error page could not?
-The log line records the id of every movie that was saved, with a timestamp.
-Next month it can tell me exactly which records were created and in what order,
-even after the page session is long gone. The error page only exists while the
-request is active and disappears the moment you navigate away.
+## J2. What did the pagination links contain before withQueryString(), and what did the controller receive?
+Before withQueryString(), the pagination links only contained the page number
+in the URL, like ?page=2. When the controller received that request, it had no
+search term, no genre filter, and no sort value — so it ran the query without
+any of those conditions and returned the full unfiltered list, making the search
+appear to reset on page 2.
 
-## H3. When is a 403 the better answer, and when is a redirect with a message better?
-A 403 is the better answer when the action is fundamentally not allowed — like
-trying to delete the last movie in a genre, which would leave orphaned data.
-A redirect with a message is better when the refusal is something the user can
-fix themselves, like submitting an incomplete form, because it keeps them in
-the flow and tells them what to correct.
+## J3. Why is a silent wrong sort worse than an error, and what does the allowed list do?
+A misspelled sort value like ?sort=invalidcolumn does not crash the page on
+SQLite — it simply returns the results in no particular order, with no message
+to tell the user or developer that anything went wrong. This is worse than an
+error because nobody reports it and it is impossible to debug. The allowed list
+checks the value against ['title', 'release_year'] and falls back to 'title'
+if anything else is passed, so the page always behaves predictably.
